@@ -1,0 +1,56 @@
+//Design Code
+module cla(output [3:0]s,output cout,input[3:0]a,b,input cin);
+  wire p0,p1,p2,p3;
+  wire g0,g1,g2,g3;
+  wire c1,c2,c3,c4;
+  
+  assign p0=a[0]^b[0];
+  assign p1=a[1]^b[1];
+  assign p2=a[2]^b[2];
+  assign p3=a[3]^b[3];
+  
+  assign g0=a[0]&b[0];
+  assign g1=a[1]&b[1];
+  assign g2=a[2]&b[2];
+  assign g3=a[3]&b[3];
+  
+  assign c1=g0|cin&p0;
+  assign c2=g1|c1&p1;
+  assign c3=g2|c2&p2;
+  assign c4=g3|c3&p3;
+  
+  assign s[0]=p0^cin;
+  assign s[1]=p1^c1;
+  assign s[2]=p2^c2;
+  assign s[3]=p3^c3;
+  
+  assign cout=c4;
+endmodule
+
+//Test Bench Code
+module tb();
+  reg[3:0]a,b;
+  reg cin;
+  wire[3:0]s;
+  wire cout;
+  integer i;
+  cla DUT(s,cout,a,b,cin);
+  initial
+    begin
+      for(i=0;i<512;i=i+1)
+        begin
+          {a,b,cin}=i;
+          #10;
+        end
+    end
+  initial
+    begin
+      $monitor("a=%d,b=%d,cin=%d,s=%d",a,b,cin,{cout,s});
+    end
+  initial
+    begin
+      $dumpfile("test.vcd");
+      $dumpvars(1);
+    end
+endmodule
+
